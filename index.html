@@ -1,10 +1,378 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blank Page</title>
+    <title>BibTeX Reference Manager</title>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "EB Garamond", "Times", serif;
+        }
+        .logo {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 2rem;
+            background: #010040;
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .logo-image {
+            flex: 0 0 300px;
+            min-width: 300px;
+            border-radius: 1.5rem;
+            padding: 1rem;
+        }
+        .logo-content {
+            flex: 1 1 auto;
+            min-width: 300px;
+            max-width: 500px;
+            text-align: left;
+            padding-left: 4rem;
+        }
+        .logo h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .logo p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            background: #f0f0f0;
+            padding: 1rem 0;
+            font-size: 1.25rem;
+            font-weight: bolder;
+        }
+        .nav ul {
+            list-style: none;
+            display: flex;
+            gap: 4rem;
+        }
+        .nav a {
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s;
+        }
+        .nav a:hover {
+            background: #b6b6b6;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem;
+        }
+        .feature-card {
+            background: #f0f0f0;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 1.5rem;
+            color: #010040;
+        }
+        .feature-card h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+        .download {
+            padding: 2rem 4rem;
+        }
+        .download h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .download p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+        .download a.button {
+            display: inline-block;
+            margin-top: 1.25rem;
+            padding: 1rem 2rem;
+            border-radius: 999px;
+            background: #010040;
+            color: #ffffff;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 12px 25px rgba(0, 110, 255, 0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .download a.button:hover,
+        .download a.button:focus-visible {
+            transform: translateY(-1px);
+            background: #010040;
+            box-shadow: 0 16px 30px rgba(0, 110, 255, 0.35);
+        }
+        .screenshots {
+            padding: 2rem 4rem;
+        }
+        .section-separator {
+            width: 100%;
+            height: 1px;
+            margin: 2rem 0;
+            background: #333;
+            border: none;
+        }
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            align-items: start;
+        }
+        .image_text {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .screenshot-thumb,
+        .image_text img,
+        .screenshots img {
+            width: 100%;
+            height: auto;
+            border-radius: 1.5rem;
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+        }
+        .screenshot-thumb:hover {
+            transform: scale(1.02);
+        }
+        .image_text p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .lightbox.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            z-index: 1;
+        }
+        .lightbox img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 1rem;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+        }
+        .lightbox-caption {
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+            max-width: 90vw;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0.65);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        .developer-diary {
+            padding: 2rem 4rem;
+            background: #f0f0f0;
+            color: #333
+        }
+        .developer-diary h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .developer-diary h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .developer-diary p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+    </style>
 </head>
+
 <body>
+<div class="logo">
+    <div class="logo-image">
+        <img src="stack_of_books.png" style="min-width: 50px; max-width: 350px; height: auto;"></img>
+    </div>
+    <div class="logo-content">
+        <h1>BibTeX Reference Manager</h1>
+        <p>A lightweight, easy-to-use reference management tool centered 
+            around the BibTeX citation format</p>
+    </div>
+</div>
+<div class="nav">
+    <ul>
+        <li><a href="#download">Download</a></li>
+        <li><a href="#screenshots">Screenshots</a></li>
+        <li><a href="#developer-diary">Developer diary</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+</div>
+<hr class="section-separator">
+<div class="feature-grid">
+    <div class="feature-card">
+        <h1>BibTeX Management</h1>
+        <p>Quickly build BibTeX entries with intuitive forms 
+            that highlight the fields you need.</p>
+    </div>
+    <div class="feature-card">
+        <h1>Cross-Platform Compatibility</h1>
+        <p>BibTeX Reference Manager is cross-platform, and will 
+            work on Windows, macOS and Linux.</p>
+    </div>
+    <div class="feature-card">
+        <h1>Organise your references into libraries</h1>
+        <p>Keep your references in separate libraries for better organisation.</p>
+    </div>
+    <div class="feature-card">
+        <h1>Manage your PDFs</h1>
+        <p>Attach and manage PDF files directly within your reference entries.</p>
+    </div>
+</div>
+<hr class="section-separator">
+<section id="download">
+    <div class="download">
+        <h1>Download</h1>
+        <h2>Alpha Release</h2>
+        <p>The core features are fully functional, and development is ongoing. Feedback is welcome as the tool evolves.</p>
+        <p>Download the latest Alpha version here:</p>
+        <a class="button" href="gui.zip" aria-label="Download the latest Alpha version">Download</a>
+    </div>
+</section>
+<hr class="section-separator">
+<div class="screenshots">
+    <h1>Screenshots</h1>
+    <div class="screenshots-grid">
+        <div class="image_text">
+            <img class="screenshot-thumb" src="screenshot_main.png" alt="Main interface screenshot" data-caption="The main interface for managing references. The citation key is at the forefront, making it easy to use in your LaTeX documents.">
+            <p>The main interface for managing references. The citation key is at the forefront of this,
+                making it easy to use in your LaTeX documents.</p>
+        </div>
+        <div class="image_text">
+            <img class="screenshot-thumb" src="screenshot_bibtex_list.png" alt="BibTeX list screenshot" data-caption="The list of citation types come from the BibTeX format, each of them with their own fields and requirements.">
+            <p>The list of citation types come from the BibTeX format, each of them with their own fields 
+                and requirements.</p>
+        </div>
+        <div class="image_text">
+            <img class="screenshot-thumb" src="screenshot_form.png" alt="Form screenshot" data-caption="The form is split into the required fields for each citation type, and the optional fields. This makes it easy to create a citation without having to refer to the BibTeX documentation.">
+            <p>The form is split into the required fields for each citation type, and the optional fields. 
+                This makes it easy to create a citation without having to refer to the BibTeX documentation.</p>
+        </div>
+    </div>
+</div>
+<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption">
+    <div class="lightbox-content">
+        <button type="button" class="lightbox-close" aria-label="Close">×</button>
+        <img id="lightbox-img" src="" alt="Expanded screenshot">
+        <p id="lightbox-caption" class="lightbox-caption"></p>
+    </div>
+</div>
+<hr class="section-separator">
+<section id="developer-diary">
+    <div class="developer-diary">
+        <h1>Developer Diary</h1>
+        <h2>1. Welcome!</h2>
+        <p>Welcome to the development section of a new reference manager. I believe that a simplified, easy-to-use reference manager 
+            that directly integrates with the BibTeX format is long overdue, and other reference managers are simply getting worse. No-one
+             wants to have to register, sign in and remember another password just to store references and PDF files in a neat repository on 
+             their local computer. I am aiming to build a lightweight reference manager that has all the features you need to read the reference 
+             materials you have and to create the BibTeX libraries for your research papers.
+        </p>
+        <p>Since the project is built with BibTeX at the forefront of its development, it should make the process of making BibTeX files much 
+            easier. No other reference manager guides the user through what fields are required for each citation type, which ones are optional, 
+            and which ones are not used by that particular citation type. Now it should be much clearer to create a well-crafted citation to go into 
+            your LaTeX documents, or with a plugin, into Microsoft Word.
+        </p>
+        <h2>2. Alpha version</h2>
+        <p>I present the initial version of the reference manager in Alpha version form. It is in a state that can be used to do 
+            everything needed for reading documents, creating BibTeX files and creating a repository to keep the documents tidy and 
+            organised. However, many more features are on the way, and the project is far from complete.
+        </p>
+        <p>Note that testing has been done, but some bugs may occur, and some known issues exist, which will be addressed in future updates 
+            before the launch of the Beta version. You can download the latest Alpha version from the Downloads section above, and I welcome 
+            any feedback you have on the tool as it is still in development.
+        </p>
+    </div>
+</section>
+<script>
+    /* Screenshot zoom functionality */
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const lightboxClose = document.querySelector('.lightbox-close');
+
+    document.querySelectorAll('.screenshot-thumb').forEach((thumb) => {
+        thumb.addEventListener('click', () => {
+            lightboxImg.src = thumb.src;
+            lightboxImg.alt = thumb.alt;
+            lightboxCaption.textContent = thumb.dataset.caption || thumb.alt;
+            lightbox.classList.add('visible');
+        });
+    });
+
+    const closeLightbox = () => {
+        lightbox.classList.remove('visible');
+        lightboxImg.src = '';
+        lightboxCaption.textContent = '';
+    };
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) {
+            closeLightbox();
+        }
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && lightbox.classList.contains('visible')) {
+            closeLightbox();
+        }
+    });
+</script>
 </body>
 </html>

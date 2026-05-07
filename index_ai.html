@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BibTeX Reference Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-alt: #020617;
+      --card: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 55%, #000 100%);
+      color: var(--text);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 16px 64px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+    .logo {
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    nav a {
+      margin-left: 16px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    nav a.primary-link {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+      gap: 32px;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr; }
+    }
+    .hero-title {
+      font-size: clamp(2.1rem, 3vw, 2.6rem);
+      font-weight: 650;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .hero-sub {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .badge {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.8);
+    }
+    .badge-accent {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: var(--accent-soft);
+      color: #e0f2fe;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .btn {
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-size: 14px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      color: var(--text);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #0b1120;
+      font-weight: 500;
+      border-color: rgba(148, 163, 184, 0.4);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+    }
+    .btn-secondary {
+      border-color: var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+    }
+    .hero-note {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .hero-card {
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 55%),
+                  rgba(15, 23, 42, 0.96);
+      padding: 18px 18px 16px;
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.95);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .hero-card-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #e5e7eb;
+    }
+    .hero-card-chip {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+    }
+    .hero-card-body {
+      border-radius: 10px;
+      border: 1px solid rgba(30, 64, 175, 0.7);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 60%),
+                  rgba(15, 23, 42, 0.96);
+      padding: 10px 12px;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      color: #e5e7eb;
+      position: relative;
+    }
+    .hero-card-body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+    .hero-card-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .hero-card-label {
+      color: var(--muted);
+    }
+    .hero-card-value {
+      color: #e5e7eb;
+    }
+    .hero-card-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .hero-pill {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .hero-pill.required {
+      border-color: rgba(248, 250, 252, 0.7);
+      color: #e5e7eb;
+      background: rgba(15, 23, 42, 0.95);
+    }
+    .section {
+      margin-top: 40px;
+    }
+    .section-header {
+      margin-bottom: 16px;
+    }
+    .section-kicker {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 550;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .section-sub {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 720px) {
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 14px 14px 12px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .card-body {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .pill-accent {
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #e0f2fe;
+      background: var(--accent-soft);
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 720px) {
+      .gallery { grid-template-columns: 1fr; }
+    }
+    .gallery-item {
+      border-radius: var(--radius);
+      border: 1px dashed rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.7);
+      padding: 18px 12px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .download-card {
+      border-radius: var(--radius);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 60%),
+                  rgba(15, 23, 42, 0.96);
+      padding: 16px 16px 14px;
+      margin-top: 12px;
+    }
+    .download-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .platform-pill {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.9);
+    }
+    footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo">BibTeX Reference Manager</div>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#download" class="primary-link">Download</a>
+        <a href="#dev-diary">Developer diary</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <div class="hero-title">A lightweight, no‑nonsense BibTeX reference manager</div>
+          <p class="hero-sub">
+            Build clean BibTeX entries fast. No accounts, no subscriptions, no cloud lock‑in—just your references, organised.
+          </p>
+          <div class="hero-badges">
+            <span class="badge badge-accent">BibTeX‑first</span>
+            <span class="badge">Local‑first</span>
+            <span class="badge">Cross‑platform</span>
+          </div>
+          <div class="hero-actions">
+            <a href="#download" class="btn btn-primary">
+              Download alpha
+            </a>
+            <a href="#screenshots" class="btn btn-secondary">
+              View screenshots
+            </a>
+          </div>
+          <div class="hero-note">
+            Alpha release · Core features complete · Windows, macOS, Linux
+          </div>
+        </div>
+
+        <aside class="hero-card" aria-label="BibTeX entry preview">
+          <div class="hero-card-header">
+            <div>
+              <div class="hero-card-title">BibTeX entry builder</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Focused on the citation key and required fields</div>
+            </div>
+            <span class="hero-card-chip">Local library</span>
+          </div>
+          <div class="hero-card-body">
+            <div class="hero-card-row">
+              <div class="hero-card-label">Entry type</div>
+              <div class="hero-card-value">@article</div>
+            </div>
+            <div class="hero-card-row">
+              <div class="hero-card-label">Citation key</div>
+              <div class="hero-card-value">smith2024-bibtex</div>
+            </div>
+            <div class="hero-card-row">
+              <div class="hero-card-label">Required fields</div>
+              <div class="hero-card-pill-row">
+                <span class="hero-pill required">author</span>
+                <span class="hero-pill required">title</span>
+                <span class="hero-pill required">journal</span>
+                <span class="hero-pill required">year</span>
+              </div>
+            </div>
+            <div class="hero-card-row" style="margin-top:6px;">
+              <div class="hero-card-label">Optional fields</div>
+              <div class="hero-card-pill-row">
+                <span class="hero-pill">volume</span>
+                <span class="hero-pill">number</span>
+                <span class="hero-pill">pages</span>
+                <span class="hero-pill">doi</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="section" id="why">
+        <div class="section-header">
+          <div class="section-kicker">Why this tool exists</div>
+          <div class="section-title">Reference management without the bloat</div>
+          <p class="section-sub">
+            Managing references shouldn’t require an account, a cloud service, or a heavyweight application.
+            This manager is built around a simple idea: make creating BibTeX entries effortless.
+          </p>
+        </div>
+        <div class="feature-grid">
+          <div class="card">
+            <div class="card-title">BibTeX‑first design</div>
+            <div class="card-body">
+              Structured forms highlight required and optional fields for each citation type, so you don’t have to keep
+              checking documentation while you write.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Local‑first, no account</div>
+            <div class="card-body">
+              Your libraries live on your machine. No sign‑in, no tracking, no forced cloud sync—just files you control.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="section-header">
+          <div class="section-kicker">Features</div>
+          <div class="section-title">Everything you need for clean BibTeX</div>
+          <p class="section-sub">
+            Focused on the core workflow: creating, organising, and exporting high‑quality BibTeX entries.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <div class="card">
+            <div class="card-title">Structured entry builder</div>
+            <div class="card-body">
+              Create accurate entries quickly with clear separation of required and optional fields for each BibTeX type.
+            </div>
+            <div class="pill-row">
+              <span class="pill">Articles</span>
+              <span class="pill">Books</span>
+              <span class="pill">In‑proceedings</span>
+              <span class="pill">More…</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Multiple libraries</div>
+            <div class="card-body">
+              Keep projects separate and tidy by creating different libraries for each paper, thesis, or research area.
+            </div>
+            <div class="pill-row">
+              <span class="pill">Per‑project collections</span>
+              <span class="pill">Searchable lists</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Integrated PDF management</div>
+            <div class="card-body">
+              Attach and manage PDFs directly within your reference entries so everything you need stays in one place.
+            </div>
+            <div class="pill-row">
+              <span class="pill">Attach files</span>
+              <span class="pill">Open from entries</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Cross‑platform</div>
+            <div class="card-body">
+              Runs on Windows, macOS, and Linux with the same clean interface everywhere.
+            </div>
+            <div class="pill-row">
+              <span class="pill-accent">Windows</span>
+              <span class="pill-accent">macOS</span>
+              <span class="pill-accent">Linux</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="screenshots">
+        <div class="section-header">
+          <div class="section-kicker">Screenshots</div>
+          <div class="section-title">See the interface before you download</div>
+          <p class="section-sub">
+            A clean, focused UI designed around the citation key and BibTeX fields.
+          </p>
+        </div>
+        <div class="gallery">
+          <div class="gallery-item">Main reference management view<br><small>(Insert screenshot)</small></div>
+          <div class="gallery-item">BibTeX entry editor with required/optional fields<br><small>(Insert screenshot)</small></div>
+          <div class="gallery-item">Library overview and PDF attachments<br><small>(Insert screenshot)</small></div>
+        </div>
+      </section>
+
+      <section class="section" id="download">
+        <div class="section-header">
+          <div class="section-kicker">Download</div>
+          <div class="section-title">Alpha release</div>
+          <p class="section-sub">
+            The core features are ready for real use. Some bugs may remain, and more functionality is planned for the beta.
+          </p>
+        </div>
+
+        <div class="download-card">
+          <div style="font-size:14px;font-weight:500;margin-bottom:4px;">Get the latest build</div>
+          <div style="font-size:13px;color:var(--muted);">
+            Download the current alpha release from GitHub and start building your BibTeX libraries.
+          </div>
+          <div class="download-row">
+            <a href="https://github.com/your-user/your-repo" class="btn btn-primary">
+              Download from GitHub
+            </a>
+            <span class="platform-pill">Windows</span>
+            <span class="platform-pill">macOS</span>
+            <span class="platform-pill">Linux</span>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--muted);">
+            Version 0.1.0‑alpha · Feedback welcome
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="dev-diary">
+        <div class="section-header">
+          <div class="section-kicker">Developer diary</div>
+          <div class="section-title">Why and how this project is being built</div>
+          <p class="section-sub">
+            Follow the project’s progress, design decisions, and upcoming features.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Welcome</div>
+          <div class="card-body">
+            This reference manager grew out of frustration with heavyweight tools and awkward BibTeX workflows.
+            The goal is simple: a focused, BibTeX‑centric app that stays out of your way.
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:10px;">
+          <div class="card-title">Alpha release notes</div>
+          <div class="card-body">
+            The alpha includes: creating and editing BibTeX entries, managing multiple libraries, and attaching PDFs.
+            Future updates will refine the UI, add more citation types, and improve export options.
+          </div>
+        </div>
+
+        <p style="margin-top:10px;font-size:13px;color:var(--muted);">
+          A longer, more detailed diary can live on a separate page or blog if you’d like.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <div>© <span id="year"></span> BibTeX Reference Manager</div>
+      <div>
+        <a href="mailto:you@example.com">Contact</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/your-user/your-repo">GitHub</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

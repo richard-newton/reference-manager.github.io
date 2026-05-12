@@ -16,6 +16,14 @@
         body {
             font-family: "EB Garamond", "Times", serif;
         }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
         .logo {
             display: flex;
             flex-wrap: nowrap;
@@ -96,10 +104,7 @@
         .download {
             padding: 2rem 4rem;
         }
-        .download h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
+
         .download p {
             font-size: 1.25rem;
             opacity: 0.9;
@@ -236,58 +241,54 @@
             background: #ffffff;
             color: #333;
         }
-        .contact h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        .contact p {
-            font-size: 1.25rem;
-            opacity: 0.9;
-        }
-
     </style>
 </head>
 
 <body>
+<div class="nav">
+    <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#screenshots">Screenshots</a></li>
+        <li><a href="#download">Download</a></li>
+        <li><a href="#developer-diary">Developer diary</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+</div>
 <div class="logo">
     <div class="logo-image">
         <img src="stack_of_books.png" style="min-width: 50px; max-width: 350px; height: auto;"></img>
     </div>
     <div class="logo-content">
         <h1>BibTeX Reference Manager</h1>
-        <p>A lightweight, easy-to-use reference management tool centered 
-            around the BibTeX citation format</p>
+        <p>The fast, lightweight tool to create clean, error-free BiBTeX entries, without the bloat.</p>
+        <p>Build citations with intuitive BiBTeX-following forms, organise your libraries, and manage PDFs and links locally with no sign-ins or cloud lock-in.</p>
     </div>
 </div>
-<div class="nav">
-    <ul>
-        <li><a href="#download">Download</a></li>
-        <li><a href="#screenshots">Screenshots</a></li>
-        <li><a href="#developer-diary">Developer diary</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-</div>
-<hr class="section-separator">
-<div class="feature-grid">
-    <div class="feature-card">
-        <h1>BibTeX Management</h1>
-        <p>Quickly build BibTeX entries with intuitive forms 
+<section id="features">
+    <div class="features">
+        <h1>Features</h1>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h1>BibTeX Management</h1>
+                <p>Quickly build BibTeX entries with intuitive forms 
             that highlight the fields you need.</p>
+        </div>
+        <div class="feature-card">
+            <h1>Cross-Platform Compatibility</h1>
+            <p>BibTeX Reference Manager is cross-platform, and will 
+                work on Windows, macOS and Linux.</p>
+        </div>
+        <div class="feature-card">
+            <h1>Organise your references into libraries</h1>
+            <p>Keep your references in separate libraries for better organisation.</p>
+        </div>
+        <div class="feature-card">
+            <h1>Manage your PDFs</h1>
+            <p>Attach and manage PDF files directly within your reference entries.</p>
+        </div>
     </div>
-    <div class="feature-card">
-        <h1>Cross-Platform Compatibility</h1>
-        <p>BibTeX Reference Manager is cross-platform, and will 
-            work on Windows, macOS and Linux.</p>
-    </div>
-    <div class="feature-card">
-        <h1>Organise your references into libraries</h1>
-        <p>Keep your references in separate libraries for better organisation.</p>
-    </div>
-    <div class="feature-card">
-        <h1>Manage your PDFs</h1>
-        <p>Attach and manage PDF files directly within your reference entries.</p>
-    </div>
-</div>
+</section>
+
 <hr class="section-separator">
 <section id="download">
     <div class="download">
